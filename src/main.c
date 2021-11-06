@@ -18,7 +18,6 @@ int main (int argc, char *argv[]){
         return -1;
     }
 
-
     char *str_count_islands = mx_strnew(11);
     read_line_new(&str_count_islands, '\n', file_size, fd);
     for (int i = 0; i < mx_strlen(str_count_islands); i++){
@@ -32,85 +31,100 @@ int main (int argc, char *argv[]){
     int count_islands = mx_atoi(str_count_islands);
     free(str_count_islands);
 
-
     int count_lines = 1;
-    int tmp = 0;
-    int iterrator = 0;
-    t_line **arr = (t_line **) malloc(count_islands * sizeof (t_line *));
+    int tmp = 1;
+    t_line *lines;
+
     while (tmp > 0){
         count_lines++;
 
-
-        char *buf = (char *)malloc(sizeof char*);
-        tmp = read_line_new(&buf,'-',file_size,fd);
-        if(mx_check_string(buf) == false || tmp < 0){
+        char *buf1 = (char *)malloc(sizeof char*);
+        tmp = read_line_new(&buf1,'-',file_size,fd);
+        if(mx_check_string(buf1) == false || tmp < 0) {
             err_invalid_line_n(count_lines);
-            close(fd);
-            for ( int i = 0; i < count_islands; i++) {
-                free(arr[i]);
+            while (lines){
+                mx_pop_front(*lines);
             }
-            free(buf);
+            close(fd);
+            free(buf1);
             return -1;
         }
-        //arr[iterrator]->island = (char *)malloc(sizeof char*);
-        mx_strcpy(arr[iterrator]->island, buf);
-        free(buf);
 
 
-        char *buf = (char *)malloc(sizeof char*);
-        tmp = read_line_new(&buf, ',', file_size, fd);
-        if(mx_check_string(buf) == false || tmp < 0){
+        char *buf2 = (char *)malloc(sizeof char*);
+        tmp = read_line_new(&buf2, ',', file_size, fd);
+        if(mx_check_string(buf2) == false || tmp < 0) {
             err_invalid_line_n(count_lines);
-            close(fd);
-            for ( int i = 0; i < count_islands; i++) {
-                free(arr[i]);
+            while (lines){
+                mx_pop_front(*lines);
             }
-            free(buf);
+            close(fd);
+            free(buf2);
             return -1;
         }
-        //arr[iterrator]->next = (char *)malloc(sizeof char*);
-        mx_strcpy(arr[iterrator]->next, buf);
-        free(buf);
 
-
-        char *buf = (char *)malloc(sizeof char*);
-        tmp = read_line_new(&buf, '\n', file_size, fd);
-        for (int i = 0; i < mx_strlen(buf); i++){
-            if(mx_isdigit(buf[i]) == false){
+        char *buf3 = (char *)malloc(sizeof char*);
+        tmp = read_line_new(&buf3, '\n', file_size, fd);
+        for (int i = 0; i < mx_strlen(buf3); i++) {
+            if (mx_isdigit(buf[i]) == false) {
                 err_invalid_line_n(count_lines);
-                close(fd);
-                for ( int i = 0; i < count_islands; i++) {
-                    free(arr[i]);
+                while (lines){
+                    mx_pop_front(*lines);
                 }
-                free(buf);
+                close(fd);
+                free(buf3);
                 return -1;
             }
         }
-        arr[iterrator]->path = mx_atoi(buf);
-        if(arr[iterrator]->path <= 0){
+
+        int path = mx_atoi(buf3);
+        if(path <= 0){
             err_invalid_line_n(count_lines);
-            close(fd);
-            for ( int i = 0; i < count_islands; i++) {
-                free(arr[i]);
+            while (lines){
+                mx_pop_front(*lines);
             }
-            free(buf);
+            close(fd);
+            free(buf3);
             return -1;
         }
-        free(buf);
+        mx_push_back_new(*lines, buf1, buf2, path);
+        free(buf1);
+        free(buf2);
+        free(buf3);
     }
-    for (int i = 0; i < count_lines - 1; i++){
-        for(int j = i+1; j < count_lines - 2; j++) {
-            if ((mx_strcmp(arr[i]->island, arr[j]->island) == 0
-                    && mx_strcmp(arr[i]->next, arr[j]->next) == 0)
-                        || (mx_strcmp(arr[i]->next, arr[j]->island) == 0
-                             && mx_strcmp(arr[i]->island, arr[j]->next) == 0)){
+
+    char *arr[(count_lines-1)*2];
+    t_line *temp = lines;
+    for (int i = 0; i < (count_lines-1)*2; i++){
+        arr[i] = mx_strdup(temp->island1);
+        i++;
+        arr[i] = mx_strdup(temp->island2);
+        if(i != (count_lines-1)*2 - 1) {
+            temp = temp->next;
+        }
+    }
+
+    for (int i = 0; i < (count_lines-1)*2 - 2; i++){
+        for(int j = i + 2; j < (count_lines-1)*2; j++){
+            if((mx_strcmp(arr[i], arr[j]) == 0 && mx_strcmp(arr[i+1], arr[j+1]) == 0) || (mx_strcmp(arr[i], arr[j+1]) == 0 &&
+                    mx_strcmp(arr[i+1], arr[j]) == 0)) {
                 mx_printerr("error: duplicate bridges");
-                for ( int i = 0; i < count_islands; i++) {
-                    free(arr[i]);
+                while (lines){
+                    mx_pop_front(*lines);
                 }
                 close(fd);
                 return -1;
+            } else {
+                j++;
             }
         }
+        i++;
     }
+
+    t_arr_elem *arr_islands[count_lines];
+    t_line *line_buf = lines;
+
+
+
+
 }

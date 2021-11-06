@@ -1,22 +1,21 @@
 #include "../inc/pathfinder.h"
 
 int read_line_new(char **lineptr, char delim, int file_size, const int fd) {
-    if (!fd || buf_size == 0) {
+    if (fd < 0) {
         return -2;
     }
     char *buffer = mx_strnew(file_size);
-    int buf_size = 1;
-    int flag;
+    int flag = 1;
     int count = 0;
     while (flag > 0){
-        char *buf = mx_strnew(buf_size);
-        if ( (flag = read(fd, buf, buf_size)) > 0) {
+        char *buf = mx_strnew(1);
+        if ( (flag = read(fd, buf, 1)) > 0) {
             if (mx_strchr(buf, delim)) {
                 free(buf);
                 break;
             }
-            count += buf_size;
-            mx_strncat(buffer, buf, buf_size);
+            count += 1;
+            mx_strncat(buffer, buf, 1);
             free(buf);
         } else {
             free(buf);
