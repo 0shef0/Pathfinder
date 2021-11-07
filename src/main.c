@@ -28,12 +28,16 @@ int main (int argc, char *argv[]){
             return -1;
         }
     }
-    int count_islands = mx_atoi(str_count_islands);
+    int count_islands_first_line = mx_atoi(str_count_islands); .
     free(str_count_islands);
 
     int count_lines = 1;
     int tmp = 1;
-    t_line *lines;
+    //==========================================================================================================
+
+    t_line *lines; // список с записью строк ( остров 1, остров 2, расстояние
+
+    //==========================================================================================================
 
     while (tmp > 0){
         count_lines++;
@@ -93,7 +97,12 @@ int main (int argc, char *argv[]){
         free(buf3);
     }
 
-    char *arr[(count_lines-1)*2];
+    //==========================================================================================================
+
+    char *arr[(count_lines-1)*2]; // массив с записью островов со строками ( дубликаты )
+
+    //==========================================================================================================
+
     t_line *temp = lines;
     for (int i = 0; i < (count_lines-1)*2; i++){
         arr[i] = mx_strdup(temp->island1);
@@ -121,10 +130,48 @@ int main (int argc, char *argv[]){
         i++;
     }
 
-    t_arr_elem *arr_islands[count_lines];
-    t_line *line_buf = lines;
+    int flag = 0;
+    int count_islands = 0;
+    //==========================================================================================================
 
+    t_arr_elem *arr_islands[(count_lines-1)*2]; // массив островов без дубликатов с порядковым номером
 
+    //==========================================================================================================
+    arr_islands[0]->island = mx_strdup(arr[0]);
+    arr_islands[0]->id = 0;
+    for (int i = 1; i < (count_lines-1) * 2; i++) {
+        for (int j = i - 1 ; j >= 0; j++) {
+            if(mx_strcmp(arr[j], arr_islands[j]->island)){
+                flag = 1;
+            }
+        }
+        if (flag == 0){
+            arr_islands[i]->island = mx_strdup(arr[i]);
+            arr_islands[i]->id = i;
+            count_islands_first_line++;
+        }
+    }
 
+    t_matrix_elem matrix[count_islands][count_islands];
 
+    t_line *lines_buf = lines;
+    for(int i = 0; i < count_islands; i++){
+        for ( int j = 0; j < count_islands; j++) {
+            matrix[i][j].distance = 0;
+            matrix[i][j].route = false;
+            if (mx_strcmp(arr_islands[j]->island, lines_buf->island1) == 0) {
+                for (int k = 0; k < count_islands - 1; k++) {
+                    if (k != i) {
+                        if (mx_strcmp(arr_islands[k]->island, lines_buf->island2)) {
+                            matrix[i][k].route = true;
+                            matrix[i][k].distance = lines_buf->path;
+                            matrix[k][i].route = true;
+                            matrix[k][i].distance = lines_buf->path;
+                            lines_buf = lines_buf->next;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

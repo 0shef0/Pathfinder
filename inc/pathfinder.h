@@ -16,8 +16,7 @@ typedef struct s_arr_elem {
 }              t_arr_elem;
 
 typedef struct s_matrix_elem {
-    int row;
-    int collum;
+    int distance;
     bool route;
 }              t_matrix_elem;
 
