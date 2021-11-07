@@ -3,9 +3,11 @@
 int mx_atoi(const char *str) {
     long int num = 0;
     int buf = 1;
+    int i = 0;
     if (str[0] == '-') {
         buf *= -1;
         str++;
+        i++;
     }
     while (*str) {
         if (*str > 47
@@ -27,7 +29,9 @@ int mx_atoi(const char *str) {
             }
         }
         str++;
+        i++;
     }
+    str -= i;
     if (buf < 0) {
         return (int)-num;
     } else {
