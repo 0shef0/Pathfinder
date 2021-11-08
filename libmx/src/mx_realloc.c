@@ -1,7 +1,7 @@
 #include "../inc/libmx.h"
 
 void *mx_realloc(void *ptr, size_t size) {
-    size_t old_size = malloc_size(ptr);
+    size_t old_size = sizeof (ptr);
     void *newptr = malloc(size);
     if ( newptr == NULL ){
         return NULL;
