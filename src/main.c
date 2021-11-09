@@ -36,12 +36,12 @@ int main (int argc, char *argv[]) {
     char *str_count = mx_strndup(str, indexn+1);
     int count_islands_file = mx_atoi(str_count);
     free(str_count);
-    mx_printint(count_lines);
-    str += indexn + 1;
-    t_line lines[count_lines-1];
 
-    int count_lines = count_lines(str);
+
+    int count_lines = mx_count_lines_of_file(str);
+    str += indexn + 1;
     mx_printint(count_lines);
+    t_line lines[count_lines-1];
 
 
     int iterator = indexn + 1;
@@ -86,6 +86,10 @@ int main (int argc, char *argv[]) {
         for (int j = 0; j < mx_strlen(lines[i].island1); j++) {
             if (mx_isalpha(lines[i].island1[j]) != true) {
                 err_invalid_line_n(i + 2);
+                for(int k = 0; k < count_lines - 1; k++){
+                    mx_strdel(&lines[k].island1);
+                    mx_strdel(&lines[k].island2);
+                }
                 exit(0);
             }
         }
@@ -129,22 +133,51 @@ int main (int argc, char *argv[]) {
             mx_push_back_island(&islands, lines[i].island2); // не забыть удалять
         }
     }
+    mx_strdel(&str);
     //==================================================================================================================
 
+    //==================================================================================================================
+    //проверка островов
     int real_count_of_islands = mx_list_size_islands(islands);
     if(real_count_of_islands != count_islands_file){
         mx_printerr("error: invalid count of islands");
         while(islands){
-            free(islands->island);
-            islands->island = NULL;
+            mx_pop_back_island(&islands);
         }
-        for(int i = 0; i < count_lines - 2; i++){
-            lines
+        for(int i = 0; i < count_lines - 1; i++){
+            mx_strdel(&lines[i].island1);
+            mx_strdel(&lines[i].island2);
         }
-        free(str);
+    }
+    //==================================================================================================================
+
+    char *arr_islands[real_count_of_islands];
+    for(int i = 0; i < real_count_of_islands; i++){
+        arr_islands[i] = mx_strdup(islands->island);
+        islands = islands->next;
+    }
+    while (islands){
+        mx_pop_back_island(&islands);
     }
 
-    free(str);
+    int matrix[real_count_of_islands][real_count_of_islands];
+    for (int i = 0; i < real_count_of_islands; i++){
+        for(int j = 0; j < real_count_of_islands; j++){
+            matrix[i][j] = 0;
+        }
+    }
+    for (int i = 0; i < count_lines - 1; i++){
+        for(int j = 0; j < real_count_of_islands; j++){
+
+        }
+    }
+    for (int i = 0; i < real_count_of_islands; i++){
+        for (int j = 0; j < real_count_of_islands; j++){
+            mx_printint(matrix[i][j]);
+            mx_printchar(' ');
+        }
+        mx_printchar('\n');
+    }
 }
 
 
