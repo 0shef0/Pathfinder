@@ -33,9 +33,8 @@ int main (int argc, char *argv[]) {
     }
 
 
-    char *str_count = mx_strndup(str, indexn+1);
+    char *str_count = mx_strndup(str, indexn + 1);
     int count_islands_file = mx_atoi(str_count);
-    free(str_count);
     //mx_printint(count_islands_file);
 
 
@@ -69,7 +68,6 @@ int main (int argc, char *argv[]) {
 
 
     str -= iterator;
-    mx_strdel(&str);
 
     //==================================================================================================================
     //проверка на правильность строк
@@ -124,7 +122,6 @@ int main (int argc, char *argv[]) {
             mx_push_back_island(&islands, lines[i].island2); // не забыть удалять
         }
     }
-    //mx_strdel(&str);
 
 //    t_island *tmp = islands;
 //    while (tmp){
@@ -145,6 +142,7 @@ int main (int argc, char *argv[]) {
             mx_strdel(&lines[i].island1);
             mx_strdel(&lines[i].island2);
         }
+        exit(0);
     }
     //==================================================================================================================
 
@@ -152,9 +150,6 @@ int main (int argc, char *argv[]) {
     for(int i = 0; i < real_count_of_islands; i++){
         arr_islands[i] = mx_strdup(islands->island);
         islands = islands->next;
-    }
-    while (islands){
-        mx_pop_back_island(&islands);
     }
 
     int matrix[real_count_of_islands][real_count_of_islands];
@@ -175,6 +170,7 @@ int main (int argc, char *argv[]) {
             }
         }
     }
+
     for (int i = 0; i < real_count_of_islands; i++){
         for (int j = 0; j < real_count_of_islands; j++){
             mx_printint(matrix[i][j]);
@@ -183,55 +179,24 @@ int main (int argc, char *argv[]) {
         mx_printchar('\n');
     }
     for(int i = 0; i < real_count_of_islands; i++){
-        Dijkstra(i ,real_count_of_islands, matrix);
+        Dijkstra(i ,real_count_of_islands, matrix, arr_islands);
     }
+
+    for(int i = 0; i < real_count_of_islands; i++){
+        free(arr_islands[i]);
+    }
+    while (islands){
+        mx_pop_back_island(&islands);
+    }
+    for(int i = 0; i < count_lines - 1; i++){
+        free(lines[i].island1);
+        free(lines[i].island2);
+    }
+    free(str);
+    free(str_count);
 }
 
-void Dijkstra(int st, int count_islands, int GR[count_islands][count_islands]) {
-    int distance[count_islands];
-    int count;
-    int index;
-    int i;
-    int u;
-    int m = st + 1;
-    bool visited[count_islands];
-    for (i = 0; i < count_islands; i++) {
-        distance[i] = 2147483647;
-        visited[i] = false;
-    }
-    distance[st] = 0;
-    for (count = 0; count < count_islands - 1; count++) {
-        int min = 2147483647;
-        for (i = 0; i < count_islands; i++)
-            if (!visited[i] && distance[i] <= min) {
-                min = distance[i];
-                index = i;
-            }
-        u = index;
-        visited[u] = true;
-        for (i = 0; i < count_islands; i++)
-            if (!visited[i] && GR[u][i] && distance[u] != 2147483647 &&
-                distance[u] + GR[u][i] < distance[i])
-                distance[i] = distance[u] + GR[u][i];
-    }
-    mx_printstr("Стоимость пути из начальной вершины до остальных:\t\n");
-    for (i = 0; i < count_islands; i++) {
-        if (distance[i] != 2147483647) {
-            mx_printint(m);
-            mx_printstr(" > ");
-            mx_printint(i + 1);
-            mx_printstr(" = ");
-            mx_printint(distance[i]);
-            mx_printchar('\n');
-        } else {
-            mx_printint(m);
-            mx_printstr(" > ");
-            mx_printint(i + 1);
-            mx_printstr(" = ");
-            mx_printstr("маршрут недоступен\n");
-        }
-    }
-}
+
 
 
 

@@ -26,7 +26,7 @@ void mx_push_back_island(t_island **head, char *island);
 int mx_list_size_islands(t_island *list);
 int mx_count_lines_of_file(char *str);
 void mx_pop_back_island(t_island **head);
-void Dijkstra(int st, int count_islands, int GR[count_islands][count_islands]);
+void Dijkstra(int st, int count_islands, int GR[count_islands][count_islands], char **islands);
 
 
 #endif
