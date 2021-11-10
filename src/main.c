@@ -33,8 +33,9 @@ int main (int argc, char *argv[]) {
     }
 
 
-    char *str_count = mx_strndup(str, indexn + 1);
+    char *str_count = mx_strndup(str, indexn);
     int count_islands_file = mx_atoi(str_count);
+    free(str_count);
     //mx_printint(count_islands_file);
 
 
@@ -60,14 +61,15 @@ int main (int argc, char *argv[]) {
         if( indexn == -1 ){
             indexn = mx_strlen(str);
         }
-
-        lines[i].path = mx_atoi(mx_strndup(str, indexn));
+        char * buf = mx_strndup(str, indexn);
+        lines[i].path = mx_atoi(buf);
+        free(buf);
         str += indexn + 1;
         iterator += indexn + 1;
     }
 
-
     str -= iterator;
+    free(str);
 
     //==================================================================================================================
     //проверка на правильность строк
@@ -147,9 +149,10 @@ int main (int argc, char *argv[]) {
     //==================================================================================================================
 
     char *arr_islands[real_count_of_islands];
+    t_island *tmp = islands;
     for(int i = 0; i < real_count_of_islands; i++){
-        arr_islands[i] = mx_strdup(islands->island);
-        islands = islands->next;
+        arr_islands[i] = mx_strdup(tmp->island);
+        tmp = tmp->next;
     }
 
     int matrix[real_count_of_islands][real_count_of_islands];
@@ -181,19 +184,19 @@ int main (int argc, char *argv[]) {
     for(int i = 0; i < real_count_of_islands; i++){
         Dijkstra(i ,real_count_of_islands, matrix, arr_islands);
     }
+    while (islands){
+        mx_pop_back_island(&islands);
+    }
 
     for(int i = 0; i < real_count_of_islands; i++){
         free(arr_islands[i]);
-    }
-    while (islands){
-        mx_pop_back_island(&islands);
     }
     for(int i = 0; i < count_lines - 1; i++){
         free(lines[i].island1);
         free(lines[i].island2);
     }
-    free(str);
-    free(str_count);
+
+
 }
 
 

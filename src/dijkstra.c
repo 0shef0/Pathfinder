@@ -1,58 +1,79 @@
 #include "../inc/pathfinder.h"
 
 void Dijkstra(int st, int count_islands, int GR[count_islands][count_islands], char *islands[count_islands]) {
-    int distance[count_islands];
-    int count;
-    int index;
-    int i;
-    int u;
-    int m = st + 1;
-    int indexes[count_islands];
-    bool visited[count_islands];
-    for (i = 0; i < count_islands; i++) {
-        distance[i] = 2147483647;
-        visited[i] = false;
+    //char *sum_of_routes[count_islands];
+    int v[count_islands]; // посещенные вершины
+    int temp, minindex, min;
+    int begin_index = st;
+    int d[count_islands];
+    for (int i = 0; i<count_islands; i++)
+    {
+        d[i] = 10000;
+        v[i] = 1;
     }
-    distance[st] = 0;
-    for (count = 0; count < count_islands - 1; count++) {
-        int min = 2147483647;
-        for (i = 0; i < count_islands; i++)
-            if (!visited[i] && distance[i] <= min) {
-                min = distance[i];
-                index = i;
-            }
-        u = index;
-        visited[u] = true;
-        indexes[count + 1] = index;
-        for (i = 0; i < count_islands; i++)
-            if (!visited[i] && GR[u][i] && distance[u] != 2147483647 &&
-                distance[u] + GR[u][i] < distance[i]) {
-                distance[i] = distance[u] + GR[u][i];
-            }
-    }
-    mx_printstr("Стоимость пути из начальной вершины до остальных:\t\n");
-    for (i = 0; i < count_islands; i++) {
-        if (i > st) {
-            if (distance[i] != 2147483647) {
-                mx_printstr(islands[st]);
-                for(int j = 0; indexes[j] != st; j++){
-                    mx_printstr(" -> ");
-                    mx_printstr(islands[indexes[j]]);
-                }
-                mx_printchar('\n');
-                mx_printstr(islands[st]);
-                mx_printstr(" > ");
-                mx_printstr(islands[i]);
-                mx_printstr(" = ");
-                mx_printint(distance[i]);
-                mx_printchar('\n');
-            } else {
-                mx_printint(m);
-                mx_printstr(" > ");
-                mx_printstr(islands[i]);
-                mx_printstr(" = ");
-                mx_printstr("маршрут недоступен\n");
+    d[begin_index] = 0;
+    // Шаг алгоритма
+    do {
+        minindex = 10000;
+        min = 10000;
+        for (int i = 0; i<count_islands; i++)
+        { // Если вершину ещё не обошли и вес меньше min
+            if ((v[i] == 1) && (d[i]<min))
+            { // Переприсваиваем значения
+                min = d[i];
+                minindex = i;
             }
         }
+        // Добавляем найденный минимальный вес
+        // к текущему весу вершины
+        // и сравниваем с текущим минимальным весом вершины
+        if (minindex != 10000)
+        {
+            for (int i = 0; i<count_islands; i++)
+            {
+                if (GR[minindex][i] > 0)
+                {
+                    temp = min + GR[minindex][i];
+                    if (temp < d[i])
+                    {
+                        d[i] = temp;
+                    }
+                }
+            }
+            v[minindex] = 0;
+        }
+    } while (minindex < 10000);
+    for (int i = count_islands - 1; i >= 0; i --) {
+        int ver[count_islands]; // массив посещенных вершин
+        int end = count_islands - i - 1; // индекс конечной вершины = 5 - 1
+        ver[0] = end + 1; // начальный элемент - конечная вершина
+        int k = 1; // индекс предыдущей вершины
+        int weight = d[end]; // вес конечной вершины
+
+        while (end != begin_index) // пока не дошли до начальной вершины
+        {
+            for (int j = count_islands - 1; j >= 0; j--) {// просматриваем все вершины
+                if (GR[j][end] != 0)   // если связь есть
+                {
+                    int temp = weight - GR[j][end]; // определяем вес пути из предыдущей вершины
+                    if (temp == d[j]) // если вес совпал с рассчитанным
+                    {                 // значит из этой вершины и был переход
+                        weight = temp; // сохраняем новый вес
+                        end = j;       // сохраняем предыдущую вершину
+                        ver[k] = j + 1; // и записываем ее в массив
+                        k++;
+                    }
+                }
+            }
+        }
+        // Вывод пути (начальная вершина оказалась в конце массива из k элементов)
+            mx_printstr("\nВывод кратчайшего пути\n");
+            for (int m = k - 1; m >= 0; m--) {
+                    mx_printstr(islands[ver[m] - 1]);
+                    mx_printstr(" -> ");
+            }
+            mx_printchar('\n');
+            mx_printint(d[count_islands - i - 1]);
     }
+
 }
