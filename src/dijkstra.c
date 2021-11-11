@@ -1,79 +1,60 @@
 #include "../inc/pathfinder.h"
 
-void Dijkstra(int st, int count_islands, int GR[count_islands][count_islands], char *islands[count_islands]) {
-    //char *sum_of_routes[count_islands];
-    int v[count_islands]; // посещенные вершины
-    int temp, minindex, min;
-    int begin_index = st;
-    int d[count_islands];
-    for (int i = 0; i<count_islands; i++)
-    {
-        d[i] = 10000;
-        v[i] = 1;
+bool is_visited(char **visited, char *s, int visits) {
+    int i = 0;
+    while(i < visits) {
+        if (!mx_strcmp(visited[i], s)) return true;
+        i++;
     }
-    d[begin_index] = 0;
-    // Шаг алгоритма
-    do {
-        minindex = 10000;
-        min = 10000;
-        for (int i = 0; i<count_islands; i++)
-        { // Если вершину ещё не обошли и вес меньше min
-            if ((v[i] == 1) && (d[i]<min))
-            { // Переприсваиваем значения
-                min = d[i];
-                minindex = i;
+    return false;
+}
+
+void dijkstra(int *weights, char **islands, t_line **lines, int count_islands)
+{
+    char **v = malloc(count_islands * sizeof *v);
+    char *curr;
+    int visits = 0;
+    int i = 0;
+    while ( i < count_islands ) {
+        int weight = 0;
+        int min = 0;
+        while (is_visited(v, islands[min], visits)) min++;
+        if (visits == count_islands) break;
+        int j = 0;
+        while ( j < count_islands){
+            if (is_visited(v, islands[j], visits)) {
+                j++;
+                continue;
             }
-        }
-        // Добавляем найденный минимальный вес
-        // к текущему весу вершины
-        // и сравниваем с текущим минимальным весом вершины
-        if (minindex != 10000)
-        {
-            for (int i = 0; i<count_islands; i++)
+            if (weights[j] >= 0 && (weights[min] < 0 || weights[min] > weights[j]))
             {
-                if (GR[minindex][i] > 0)
-                {
-                    temp = min + GR[minindex][i];
-                    if (temp < d[i])
-                    {
-                        d[i] = temp;
-                    }
-                }
+                min = j;
             }
-            v[minindex] = 0;
+            j++;
         }
-    } while (minindex < 10000);
-    for (int i = count_islands - 1; i >= 0; i --) {
-        int ver[count_islands]; // массив посещенных вершин
-        int end = count_islands - i - 1; // индекс конечной вершины = 5 - 1
-        ver[0] = end + 1; // начальный элемент - конечная вершина
-        int k = 1; // индекс предыдущей вершины
-        int weight = d[end]; // вес конечной вершины
-
-        while (end != begin_index) // пока не дошли до начальной вершины
-        {
-            for (int j = count_islands - 1; j >= 0; j--) {// просматриваем все вершины
-                if (GR[j][end] != 0)   // если связь есть
-                {
-                    int temp = weight - GR[j][end]; // определяем вес пути из предыдущей вершины
-                    if (temp == d[j]) // если вес совпал с рассчитанным
-                    {                 // значит из этой вершины и был переход
-                        weight = temp; // сохраняем новый вес
-                        end = j;       // сохраняем предыдущую вершину
-                        ver[k] = j + 1; // и записываем ее в массив
-                        k++;
-                    }
+        curr = islands[min];
+        j = 0;
+        while ( j < count_islands){
+            if (!mx_strcmp(lines[j]->island1, curr)) {
+                if (is_visited(v, lines[j]->island2, visits)) {
+                    j++;
+                    continue;
                 }
+                weight = get_dist(islands, weights, curr);
+                mx_set_weight(&weights, islands, lines[j]->island2, weight + lines[j]->path);
+            } else if (!mx_strcmp(lines[j]->island2, curr)) {
+                if (is_visited(v, lines[j]->island1, visits)) {
+                    j++;
+                    continue;
+                }
+                weight = get_dist(islands, weights, curr);
+                mx_set_weight(&weights, islands, lines[j]->island1, weight + lines[j]->path);
             }
+            j++;
         }
-        // Вывод пути (начальная вершина оказалась в конце массива из k элементов)
-            mx_printstr("\nВывод кратчайшего пути\n");
-            for (int m = k - 1; m >= 0; m--) {
-                    mx_printstr(islands[ver[m] - 1]);
-                    mx_printstr(" -> ");
-            }
-            mx_printchar('\n');
-            mx_printint(d[count_islands - i - 1]);
+        v[visits] = curr;
+        visits++;
+        i++;
     }
-
+    free(v);
 }
