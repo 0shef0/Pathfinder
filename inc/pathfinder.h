@@ -26,13 +26,15 @@ void mx_push_back_island(t_island **head, char *island);
 int mx_list_size_islands(t_island *list);
 int mx_count_lines_of_file(char *str);
 void mx_pop_back_island(t_island **head);
-int get_node_index(char **nodes, char *node);
-void mx_set_weight(int **weights, char **nodes, char *s, int weight);
+int island_index(char **islands, char *island);
+void distance(int **dstns, char **islands, char *s, int dst);
 int get_dist(char **nodes, int *weights, char *s);
 void dijkstra(int *weights, char **islands, t_line **lines, int count);
 int get_path(int *len, int *weights, char **islands, t_line **lines, int count_islands, char *from, char **path, int *blacklist, int *blked, int *permblkd);
 void algorythm(int count_lines, char **arr_islands, t_line **lines, int real_count_of_islands);
 void mx_print_path(int *weights, char **nodes, t_line **bridges, int count, char *from, int bridge_count);
+bool is_visited(char **visited, char *s, int visits);
+bool is_blacklisted(int c, int *blacklist, int size);
 
 
 #endif

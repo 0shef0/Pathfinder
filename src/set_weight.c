@@ -1,11 +1,11 @@
 #include "../inc/pathfinder.h"
 
-void mx_set_weight(int **weights, char **nodes, char *s, int weight) {
+void distance(int **dstns, char **islands, char *s, int dst) {
     int i = 0;
-    while(nodes[i]){
-        if (!mx_strcmp(nodes[i], s)) {
-            if ((*weights)[i] < weight && (*weights)[i] > 0) return;
-            (*weights)[i] = weight;
+    while(islands[i]){
+        if (!mx_strcmp(islands[i], s)) {
+            if ((*dstns)[i] < dst && (*dstns)[i] > 0) return;
+            (*dstns)[i] = dst;
             return;
         }
         i++;

@@ -15,12 +15,12 @@ all:
 install: all
 	@clang -std=c11 -Wall -Wextra -Werror -Wpedantic obj/*.o $(LIB) -o $(NAME)
 
-uninstall:
+uninstall: clean
 	@rm -rf libmx/libmx.a
 
-clean: uninstall
+clean:
 	@rm -rf $(NAME)
 	@rm -rf ./obj
-	@make clean -C libmx
+	@make uninstall -C libmx
 
-reinstall: clean install
+reinstall: uninstall install
