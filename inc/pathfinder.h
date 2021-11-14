@@ -14,7 +14,7 @@ typedef struct s_island {
     struct s_island *next;
 }              t_island;
 
-
+int mx_file_size(const char *file);
 void mx_printerr(const char *s);
 int read_line_new(char **lineptr, char delim, int file_size, const int fd);
 int mx_atoi(const char *str);

@@ -17,7 +17,7 @@ int get_path(int *len, int *dstns, char **islands, t_line **lines, int count_isl
         fell = true;
         from_weight = get_dist(islands, dstns, from);
         int i = 0;
-        while(i < count_islands) {
+        while(lines[i] != NULL) {
             if (is_blacklisted(i, blacklist, *blked)) {
                 i++;
                 continue;

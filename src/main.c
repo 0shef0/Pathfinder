@@ -77,6 +77,22 @@ int main (int argc, char *argv[]) {
     str -= iterator;
     free(str);
 
+    for (int i = 0; i < count_lines - 1; i++){
+        for (int j = i + 1; j < count_lines; j++){
+            if((!mx_strcmp(lines[i]->island1, lines[j]->island1) && !mx_strcmp(lines[i]->island2, lines[j]->island2))
+                    || (!mx_strcmp(lines[i]->island1, lines[j]->island2) && !mx_strcmp(lines[i]->island2, lines[j]->island1))){
+                mx_printerr("error: duplicate bridges");
+                for(int k = 0; k < count_lines; k++){
+                    mx_strdel(&lines[k]->island1);
+                    mx_strdel(&lines[k]->island2);
+                    free(lines[k]);
+                }
+                free(lines);
+                exit(0);
+            }
+        }
+    }
+
     for ( int i = 0; i < count_lines; i++){
         for (int j = 0; j < mx_strlen(lines[i]->island1); j++) {
             if (mx_isalpha(lines[i]->island1[j]) != true) {
@@ -94,8 +110,8 @@ int main (int argc, char *argv[]) {
             if (mx_isalpha(lines[i]->island2[j]) != true){
                 err_invalid_line_n(i + 2);
                 for(int k = 0; k < count_lines; k++){
-                    mx_strdel(&lines[k]->island1);
-                    mx_strdel(&lines[k]->island2);
+                    free(lines[k]->island1);
+                    free(lines[k]->island2);
                     free(lines[k]);
                 }
                 free(lines);
@@ -105,8 +121,8 @@ int main (int argc, char *argv[]) {
         if(lines[i]->path <= 0){
             err_invalid_line_n(i + 2);
             for(int k = 0; k < count_lines; k++){
-                mx_strdel(&lines[k]->island1);
-                mx_strdel(&lines[k]->island2);
+                free(lines[k]->island1);
+                free(lines[k]->island2);
                 free(lines[k]);
             }
             free(lines);

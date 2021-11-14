@@ -9,9 +9,9 @@ LIB = libmx/libmx.a
 all:
 	@make -C libmx
 	@mkdir obj
-	@clang -std=c11 -Wall -Wextra -Werror -Wpedantic -c src/*.c
+	@clang -std=c11 -Wall -Wextra -Werror -Wpedantic -c -g src/*.c
 	@mv $(OBJR) obj
-	@clang -std=c11 -Wall -Wextra -Werror -Wpedantic obj/*.o $(LIB) -o $(NAME)
+	@clang -std=c11 -Wall -Wextra -Werror -Wpedantic -g obj/*.o $(LIB) -o $(NAME)
 
 uninstall: clean
 	@rm -rf $(NAME)

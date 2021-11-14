@@ -25,7 +25,7 @@ void dijkstra(int *dstns, char **islands, t_line **lines, int count_islands)
         }
         curr = islands[min];
         j = 0;
-        while ( j < count_islands){
+        while (lines[j] != NULL){
             if (!mx_strcmp(lines[j]->island1, curr)) {
                 if (is_visited(v, lines[j]->island2, visits)) {
                     j++;
