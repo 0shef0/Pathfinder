@@ -47,9 +47,11 @@ int main (int argc, char *argv[]) {
     str += indexn + 1;
     t_line **lines = NULL;
     lines = malloc((count_lines + 1) * sizeof(t_line));
+    lines[count_lines] = NULL;
 
 
     int iterator = indexn + 1;
+    long long sum = 0;
     for(int i = 0; i < count_lines; i++){
         lines[i] = NULL;
         lines[i] = malloc(sizeof(t_line));
@@ -72,16 +74,29 @@ int main (int argc, char *argv[]) {
         free(buf);
         str += indexn + 1;
         iterator += indexn + 1;
+
+        sum += lines[i]->path;
     }
 
     str -= iterator;
     free(str);
 
+    if(sum > 2147483647){
+        mx_printerr("error: sum of bridges lengths is too big\n");
+        for(int k = 0; k < count_lines; k++){
+            mx_strdel(&lines[k]->island1);
+            mx_strdel(&lines[k]->island2);
+            free(lines[k]);
+        }
+        free(lines);
+        exit(0);
+    }
+
     for (int i = 0; i < count_lines - 1; i++){
         for (int j = i + 1; j < count_lines; j++){
             if((!mx_strcmp(lines[i]->island1, lines[j]->island1) && !mx_strcmp(lines[i]->island2, lines[j]->island2))
                     || (!mx_strcmp(lines[i]->island1, lines[j]->island2) && !mx_strcmp(lines[i]->island2, lines[j]->island1))){
-                mx_printerr("error: duplicate bridges");
+                mx_printerr("error: duplicate bridges\n");
                 for(int k = 0; k < count_lines; k++){
                     mx_strdel(&lines[k]->island1);
                     mx_strdel(&lines[k]->island2);
