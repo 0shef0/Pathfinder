@@ -81,6 +81,19 @@ int main (int argc, char *argv[]) {
     str -= iterator;
     free(str);
 
+    for(int i = 0; i < count_lines; i++){
+        if(!mx_strcmp(lines[i]->island1, lines[i]->island2)){
+            err_invalid_line_n(i+2);
+            for(int k = 0; k < count_lines; k++){
+                mx_strdel(&lines[k]->island1);
+                mx_strdel(&lines[k]->island2);
+                free(lines[k]);
+            }
+            free(lines);
+            exit(0);
+        }
+    }
+
     if(sum > 2147483647){
         mx_printerr("error: sum of bridges lengths is too big\n");
         for(int k = 0; k < count_lines; k++){
@@ -173,7 +186,7 @@ int main (int argc, char *argv[]) {
 
     int real_count_of_islands = mx_list_size_islands(islands);
     if(real_count_of_islands != count_islands_file){
-        mx_printerr("error: invalid count of islands\n");
+        mx_printerr("error: invalid number of islands\n");
         while(islands){
             mx_pop_back_island(&islands);
         }
